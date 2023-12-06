@@ -11,3 +11,9 @@ export interface ButtonProps {
   text: string;
   handleButton?: () => void;
 }
+
+export interface ContainerProps {
+  isLandingPage?: boolean;
+  children?: React.ReactNode;
+  id?: string;
+}
