@@ -12,9 +12,7 @@ function App({ Component, ...rest}: AppProps) {
 
   return (
     <Provider store={store}>
-      <PersistGate persistor={persistor} loading={
-        <div>Loading...</div>
-      }>
+      <PersistGate persistor={persistor}>
         <Component {...pageProps} />
       </PersistGate>
     </Provider>
