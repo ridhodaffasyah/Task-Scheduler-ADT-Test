@@ -18,7 +18,7 @@ const LayoutPages: React.FC<LayoutProps> = ({ children }) => {
     <main>
       <Navbar>
         <div className="flex items-center justify-start max-w-[30%] h-auto">
-          <Image src="/images/logo-3.png" alt="logo" width={220} height={30} />
+          <Image src="/images/logo.png" alt="logo" width={220} height={30} />
         </div>
         <Button isExplore text="Explore" handleButton={handleButtonExplore} />
       </Navbar>
