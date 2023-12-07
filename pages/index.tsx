@@ -1,3 +1,4 @@
+import Image from "next/image";
 import React, { useEffect, useState } from "react";
 import LayoutPages from "@/components/layout";
 import TaskList from "@/components/molecule/ListTask";
@@ -5,7 +6,11 @@ import Container from "@/components/organism/Container";
 import PopupMessage from "@/components/atom/PopUpMessage";
 
 import { useSelector, useDispatch } from "react-redux";
-import { useGetTaskMutation, useAddTaskMutation, useDeleteTaskMutation } from "@/services/task";
+import {
+  useGetTaskMutation,
+  useAddTaskMutation,
+  useDeleteTaskMutation,
+} from "@/services/task";
 import { setTask } from "@/redux/slice/taskSlice";
 
 const Home = () => {
@@ -13,8 +18,12 @@ const Home = () => {
   const [isSuccess, setIsSuccess] = useState(false);
   const [isError, setIsError] = useState(false);
   const [message, setMessage] = useState("");
+  const [isShowModal, setIsShowModal] = useState(false);
+  const [search, setSearch] = useState("");
+  const [selectedContact, setSelectedContact] = useState(null);
 
   const task = useSelector((state: any) => state.task);
+  const [listTask, setListTask] = useState(task);
 
   const dispatch = useDispatch();
   const [getTask] = useGetTaskMutation();
@@ -22,15 +31,17 @@ const Home = () => {
   const [deleteTask] = useDeleteTaskMutation();
 
   useEffect(() => {
-    getTask().unwrap().then((res) => {
-      dispatch(setTask(res));
-    }).catch((err) => {
-      console.log(err);
-    }
-    );
+    getTask()
+      .unwrap()
+      .then((res) => {
+        dispatch(setTask(res));
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }, []);
 
-  console.log(task)
+  console.log(task);
 
   const handleTaskClick = (task: any) => {
     console.log(task);
@@ -66,22 +77,42 @@ const Home = () => {
     }, 3000);
   };
 
+  const handleAddContact = () => {
+    setIsShowModal(true);
+    console.log("add");
+  };
+
   const handleRemoveTask = (id: any) => {
-    deleteTask(id).unwrap().then((res) => {
-      getTask().unwrap().then((res) => {
-        dispatch(setTask(res));
-        setIsSuccess(true);
-        showSuccessMessage("Task deleted successfully!");
-      }).catch((err) => {
+    deleteTask(id)
+      .unwrap()
+      .then((res) => {
+        getTask()
+          .unwrap()
+          .then((res) => {
+            dispatch(setTask(res));
+            setIsSuccess(true);
+            showSuccessMessage("Task deleted successfully!");
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      })
+      .catch((err) => {
         console.log(err);
-      }
+        setIsError(true);
+        showErrorMessage("Failed to delete task!");
+      });
+  };
+
+  const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.value === "") {
+      setListTask(task);
+    } else {
+      const filteredTask = listTask.task.task?.filter((task: any) =>
+        task.title.toLowerCase().includes(e.target.value.toLowerCase())
       );
-    }).catch((err) => {
-      console.log(err);
-      setIsError(true);
-      showErrorMessage("Failed to delete task!");
+      setListTask({ task: { task: filteredTask } });
     }
-    );
   };
 
   return (
@@ -109,9 +140,29 @@ const Home = () => {
           </div>
         </Container>
         <Container id="contact-list">
-          <h1 className="lg:text-[2rem] mt-[1rem] font-bold lg:text-left sm:text-[1.75rem] sm:text-center">
-            List of Task
-          </h1>
+          <div className="flex justify-between items-center mt-[1rem]">
+            <h1 className="lg:text-[2rem] font-bold lg:text-left sm:text-[1.75rem] sm:text-center">
+              List of Task
+            </h1>
+            <div className="flex lg:flex-row items-center lg:justify-end lg:w-[50%] lg:gap-[2rem] sm:w-full sm:flex-col sm:gap-[0.25rem] sm:justify-center">
+            <div
+              className="flex items-center justify-between gap-[0.75rem] p-[0.75rem] hover:cursor-pointer hover:font-bold"
+              onClick={handleAddContact}
+            >
+              <div className="w-[25px] h-[25px] flex items-center justify-center">
+                <Image src="/images/add.png" alt="add" width={25} height={25} />
+              </div>
+              <span>Add Contact</span>
+            </div>
+            <input
+              className="lg:w-[40%] lg:h-[2.5rem] rounded-[0.5rem] border-[1px_solid_#000] p-[0_1rem] lg:text-[1rem] font-[500] text-black outline-none transition-all duration-[0.25s] ease-in-out focus:shadow-[0_0_0.5rem_rgba(0,0,0,0.25)] sm:text-[0.75rem] sm:w-full sm:h-[2rem]"
+              type="text"
+              placeholder="Search Contact..."
+              onInput={handleSearch}
+            />
+          </div>
+          </div>
+          
           {task.length === 0 ? (
             <p className="lg:text-[1.25rem] font-[500] text-black mb-[1rem] text-center sm:text-[1.5rem]">
               You don't have any tasks yet.
@@ -119,7 +170,7 @@ const Home = () => {
           ) : (
             <div className="flex w-full lg:p-[0_5rem_0_5rem] flex-col gap-[1rem] sm:p-0">
               <div className="grid lg:grid-cols-[repeat(2,1fr)] gap-[1rem] sm:grid-cols-[repeat(1,1fr)]">
-                {task.task.task.map((task: any) => (
+                {listTask.task?.task?.map((task: any) => (
                   <TaskList
                     key={task.id}
                     id={task.id}
@@ -139,9 +190,21 @@ const Home = () => {
             </div>
           )}
         </Container>
-        {isSuccess && <PopupMessage message={message} type="success" />}
-        {isError && <PopupMessage message={message} type="error" />}
       </div>
+      {isSuccess && <PopupMessage message={message} type="success" />}
+      {isError && <PopupMessage message={message} type="error" />}
+      {/* {(isShowModal || isEdit) && (
+        <FormModal
+          setIsShowModal={setIsShowModal}
+          // updateContactsList={updateContactsList}
+          // updateEditedContact={updateEditedContact}
+          isEdit={isEdit}
+          setIsEdit={setIsEdit}
+          selectedContact={selectedContact}
+          showErrorMessage={showErrorMessage}
+          showSuccessMessage={showSuccessMessage}
+        />
+      )} */}
     </LayoutPages>
   );
 };
