@@ -17,3 +17,18 @@ export interface ContainerProps {
   children?: React.ReactNode;
   id?: string;
 }
+
+export interface ListContactProps {
+  id?: number;
+  title?: string;
+  desc: string;
+  date?: string;
+  hours?: string;
+  isFavorite?: boolean;
+  isEdit: boolean;
+  onFavoriteToggle?: () => void;
+  onUnfavoriteToggle?: () => void;
+  onRemoveContact?: () => void;
+  setIsEdit: (value: boolean) => void;
+  onClick?: () => void;
+}
