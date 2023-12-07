@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import LayoutPages from "@/components/layout";
 import TaskList from "@/components/molecule/ListTask";
 import Container from "@/components/organism/Container";
+import PopupMessage from "@/components/atom/PopUpMessage";
 
 import { useSelector, useDispatch } from "react-redux";
 import { useGetTaskMutation, useAddTaskMutation, useDeleteTaskMutation } from "@/services/task";
@@ -9,6 +10,9 @@ import { setTask } from "@/redux/slice/taskSlice";
 
 const Home = () => {
   const [isEdit, setIsEdit] = useState(false);
+  const [isSuccess, setIsSuccess] = useState(false);
+  const [isError, setIsError] = useState(false);
+  const [message, setMessage] = useState("");
 
   const task = useSelector((state: any) => state.task);
 
@@ -40,16 +44,42 @@ const Home = () => {
     console.log(id);
   };
 
+  const showSuccessMessage = (message: string) => {
+    setIsSuccess(true);
+    setMessage(message);
+
+    // Automatically hide the message after 3 seconds
+    setTimeout(() => {
+      setIsSuccess(false);
+      setMessage("");
+    }, 3000);
+  };
+
+  const showErrorMessage = (message: string) => {
+    setIsError(true);
+    setMessage(message);
+
+    // Automatically hide the message after 3 seconds
+    setTimeout(() => {
+      setIsError(false);
+      setMessage("");
+    }, 3000);
+  };
+
   const handleRemoveTask = (id: any) => {
     deleteTask(id).unwrap().then((res) => {
       getTask().unwrap().then((res) => {
         dispatch(setTask(res));
+        setIsSuccess(true);
+        showSuccessMessage("Task deleted successfully!");
       }).catch((err) => {
         console.log(err);
       }
       );
     }).catch((err) => {
       console.log(err);
+      setIsError(true);
+      showErrorMessage("Failed to delete task!");
     }
     );
   };
@@ -109,6 +139,8 @@ const Home = () => {
             </div>
           )}
         </Container>
+        {isSuccess && <PopupMessage message={message} type="success" />}
+        {isError && <PopupMessage message={message} type="error" />}
       </div>
     </LayoutPages>
   );

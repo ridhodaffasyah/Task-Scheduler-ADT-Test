@@ -32,3 +32,8 @@ export interface ListContactProps {
   setIsEdit: (value: boolean) => void;
   onClick?: () => void;
 }
+
+export interface PopupMessageProps {
+  message: string;
+  type: string;
+}
