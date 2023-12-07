@@ -19,16 +19,9 @@ const Home = () => {
   const [isError, setIsError] = useState(false);
   const [message, setMessage] = useState("");
   const [isShowModal, setIsShowModal] = useState(false);
-  const [search, setSearch] = useState("");
   const [selectedContact, setSelectedContact] = useState(null);
 
   const task = useSelector((state: any) => state.task);
-  const [listTask, setListTask] = useState(task);
-
-  const dispatch = useDispatch();
-  const [getTask] = useGetTaskMutation();
-  const [addTask] = useAddTaskMutation();
-  const [deleteTask] = useDeleteTaskMutation();
 
   useEffect(() => {
     getTask()
@@ -43,9 +36,12 @@ const Home = () => {
 
   console.log(task);
 
-  const handleTaskClick = (task: any) => {
-    console.log(task);
-  };
+  const [listTask, setListTask] = useState(task.task);
+
+  const dispatch = useDispatch();
+  const [getTask] = useGetTaskMutation();
+  const [addTask] = useAddTaskMutation();
+  const [deleteTask] = useDeleteTaskMutation();
 
   const handleFavoriteToggle = (id: any) => {
     console.log(id);
@@ -79,7 +75,6 @@ const Home = () => {
 
   const handleAddContact = () => {
     setIsShowModal(true);
-    console.log("add");
   };
 
   const handleRemoveTask = (id: any) => {
@@ -106,12 +101,12 @@ const Home = () => {
 
   const handleSearch = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.value === "") {
-      setListTask(task);
+      setListTask(task.task);
     } else {
-      const filteredTask = listTask.task.task?.filter((task: any) =>
+      const filteredTask = task.task?.task?.filter((task: any) =>
         task.title.toLowerCase().includes(e.target.value.toLowerCase())
       );
-      setListTask({ task: { task: filteredTask } });
+      setListTask({ task: filteredTask });
     }
   };
 
@@ -145,24 +140,29 @@ const Home = () => {
               List of Task
             </h1>
             <div className="flex lg:flex-row items-center lg:justify-end lg:w-[50%] lg:gap-[2rem] sm:w-full sm:flex-col sm:gap-[0.25rem] sm:justify-center">
-            <div
-              className="flex items-center justify-between gap-[0.75rem] p-[0.75rem] hover:cursor-pointer hover:font-bold"
-              onClick={handleAddContact}
-            >
-              <div className="w-[25px] h-[25px] flex items-center justify-center">
-                <Image src="/images/add.png" alt="add" width={25} height={25} />
+              <div
+                className="flex items-center justify-between gap-[0.75rem] p-[0.75rem] hover:cursor-pointer hover:font-bold"
+                onClick={handleAddContact}
+              >
+                <div className="w-[25px] h-[25px] flex items-center justify-center">
+                  <Image
+                    src="/images/add.png"
+                    alt="add"
+                    width={25}
+                    height={25}
+                  />
+                </div>
+                <span>Add Contact</span>
               </div>
-              <span>Add Contact</span>
+              <input
+                className="lg:w-[40%] lg:h-[2.5rem] rounded-[0.5rem] border-[1px_solid_#000] p-[0_1rem] lg:text-[1rem] font-[500] text-black outline-none transition-all duration-[0.25s] ease-in-out focus:shadow-[0_0_0.5rem_rgba(0,0,0,0.25)] sm:text-[0.75rem] sm:w-full sm:h-[2rem]"
+                type="text"
+                placeholder="Search Contact..."
+                onInput={handleSearch}
+              />
             </div>
-            <input
-              className="lg:w-[40%] lg:h-[2.5rem] rounded-[0.5rem] border-[1px_solid_#000] p-[0_1rem] lg:text-[1rem] font-[500] text-black outline-none transition-all duration-[0.25s] ease-in-out focus:shadow-[0_0_0.5rem_rgba(0,0,0,0.25)] sm:text-[0.75rem] sm:w-full sm:h-[2rem]"
-              type="text"
-              placeholder="Search Contact..."
-              onInput={handleSearch}
-            />
           </div>
-          </div>
-          
+
           {task.length === 0 ? (
             <p className="lg:text-[1.25rem] font-[500] text-black mb-[1rem] text-center sm:text-[1.5rem]">
               You don't have any tasks yet.
@@ -170,7 +170,7 @@ const Home = () => {
           ) : (
             <div className="flex w-full lg:p-[0_5rem_0_5rem] flex-col gap-[1rem] sm:p-0">
               <div className="grid lg:grid-cols-[repeat(2,1fr)] gap-[1rem] sm:grid-cols-[repeat(1,1fr)]">
-                {listTask.task?.task?.map((task: any) => (
+                {listTask.task?.map((task: any) => (
                   <TaskList
                     key={task.id}
                     id={task.id}

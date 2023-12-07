@@ -91,7 +91,7 @@ const TaskList: React.FC<ListContactProps> = ({
           </div>
         </div>
       </div>
-      <div className="flex flex-col justify-start gap-[1rem] h-full items-center">
+      <div className="flex flex-col justify-start gap-[1rem] w-[25%] h-full items-end">
         <strong className={`${status == "pending" ? "text-red-500" : status == "in-progress" ? "text-yellow-600" : status == "done" ? "text-green-600" : "text-black"} uppercase font-bold`}>{status}</strong>
         <div className="flex lg:flex-row items-center lg:gap-[1rem] justify-end sm:flex-col sm:p-0 sm:gap-[0.5rem]">
         <div className="w-[20px] h-[20px] flex items-center justify-center">
