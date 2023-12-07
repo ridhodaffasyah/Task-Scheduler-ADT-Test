@@ -6,8 +6,7 @@ const TaskList: React.FC<ListContactProps> = ({
   title,
   desc,
   date,
-  hours,
-  isFavorite,
+  status,
   onFavoriteToggle,
   onUnfavoriteToggle,
   onRemoveContact,
@@ -35,6 +34,35 @@ const TaskList: React.FC<ListContactProps> = ({
     setIsFavoriteHovered(false);
   };
 
+  const convertDate = (date: any) => {
+    // From 2024-12-31T17:00:00.000Z to 31 December 2024
+    const dateObj = new Date(date);
+    const year = dateObj.getFullYear();
+    const month = dateObj.toLocaleString("default", { month: "long" });
+    const day = dateObj.getDate();
+    return `${day} ${month} ${year}`;
+  };
+
+
+  const calculateTimeRemaining = (date: any) => {
+    // Convert the deadline string to a Date object
+    const deadline = new Date(date);
+
+    // Get the current time
+    const currentTime = new Date();
+
+    // Calculate the time difference in milliseconds
+    const timeRemaining = deadline.getTime() - currentTime.getTime();
+
+    // Convert milliseconds to days, hours, minutes, and seconds
+    const days: number = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+    const hours: number = Math.floor((timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+    const minutes: number = Math.floor((timeRemaining % (1000 * 60 * 60)) / (1000 * 60));
+    const seconds: number = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+
+    return { days, hours, minutes, seconds };
+  }
+
   return (
     <div className="flex items-center gap-[1rem] lg:p-[1rem_2rem] rounded-[0.25rem] bg-white shadow-[0_0_0.5rem_rgba(0,0,0,0.25)] transition-all duration-[0.25s] ease-in-out w-full hover:bg-[#fff3da] hover:text-black hover:cursor-pointer sm:p-[1rem_1.5rem_1rem_1.75rem]">
       <div className="flex items-center lg:gap-[1rem] w-full sm:gap-[1.75rem]">
@@ -47,30 +75,25 @@ const TaskList: React.FC<ListContactProps> = ({
           />
         </div>
         <div className="flex flex-col gap-[0.5rem]">
-          <strong>{title}</strong>
+            <strong>{title}</strong>
           <p>{desc}</p>
-          <p>
-            {date} ({hours})
-          </p>
+          <div>
+            <p className="font-bold">
+              {convertDate(date)}
+            </p>
+            {
+              calculateTimeRemaining(date).days > 0 ? (
+                <span>Remaining time: {`${calculateTimeRemaining(date).days} Days ${calculateTimeRemaining(date).hours} Hours ${calculateTimeRemaining(date).minutes} Minutes`}</span>
+              ) : (
+                <span className="italic">Out of date or The task already finished!</span>
+              )
+            }
+          </div>
         </div>
       </div>
-      <div className="flex lg:flex-row items-center lg:gap-[1rem] justify-end sm:flex-col sm:p-0 sm:gap-[0.5rem]">
-        <div className="w-[20px] h-[20px] flex items-center justify-center">
-          <Image
-            src={
-              isFavorite || isFavoriteHovered
-                ? "/images/star-on.png"
-                : "/images/star-off.png"
-            }
-            alt="star"
-            id="favorite-btn"
-            width={20}
-            height={20}
-            onMouseEnter={handleMouseEnter}
-            onMouseLeave={handleMouseLeave}
-            onClick={isFavorite ? onUnfavoriteToggle : onFavoriteToggle}
-          />
-        </div>
+      <div className="flex flex-col justify-start gap-[1rem] h-full items-center">
+        <strong className={`${status == "pending" ? "text-red-500" : status == "in-progress" ? "text-yellow-600" : status == "done" ? "text-green-600" : "text-black"} uppercase font-bold`}>{status}</strong>
+        <div className="flex lg:flex-row items-center lg:gap-[1rem] justify-end sm:flex-col sm:p-0 sm:gap-[0.5rem]">
         <div className="w-[20px] h-[20px] flex items-center justify-center">
           <Image
             src={isEditHovered ? "/images/edit-on.png" : "/images/edit-off.png"}
@@ -100,6 +123,8 @@ const TaskList: React.FC<ListContactProps> = ({
           />
         </div>
       </div>
+      </div>
+      
     </div>
   );
 };

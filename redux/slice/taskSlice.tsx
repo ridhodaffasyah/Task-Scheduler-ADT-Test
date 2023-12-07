@@ -4,9 +4,10 @@ export const taskSlice = createSlice({
     name: 'task',
     initialState: {
         task: {
-        title: '',
-        desc: '',
-        date: '',
+            title: '',
+            desc: '',
+            date: '',
+            status: '',
         },
     },
     reducers: {

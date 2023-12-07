@@ -23,7 +23,7 @@ export interface ListContactProps {
   title?: string;
   desc: string;
   date?: string;
-  hours?: string;
+  status?: string;
   isFavorite?: boolean;
   isEdit: boolean;
   onFavoriteToggle?: () => void;

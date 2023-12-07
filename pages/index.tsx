@@ -3,8 +3,30 @@ import LayoutPages from "@/components/layout";
 import TaskList from "@/components/molecule/ListTask";
 import Container from "@/components/organism/Container";
 
+import { useSelector, useDispatch } from "react-redux";
+import { useGetTaskMutation, useAddTaskMutation, useDeleteTaskMutation } from "@/services/task";
+import { setTask } from "@/redux/slice/taskSlice";
+
 const Home = () => {
   const [isEdit, setIsEdit] = useState(false);
+
+  const task = useSelector((state: any) => state.task);
+
+  const dispatch = useDispatch();
+  const [getTask] = useGetTaskMutation();
+  const [addTask] = useAddTaskMutation();
+  const [deleteTask] = useDeleteTaskMutation();
+
+  useEffect(() => {
+    getTask().unwrap().then((res) => {
+      dispatch(setTask(res));
+    }).catch((err) => {
+      console.log(err);
+    }
+    );
+  }, []);
+
+  console.log(task)
 
   const handleTaskClick = (task: any) => {
     console.log(task);
@@ -19,18 +41,18 @@ const Home = () => {
   };
 
   const handleRemoveTask = (id: any) => {
-    console.log(id);
+    deleteTask(id).unwrap().then((res) => {
+      getTask().unwrap().then((res) => {
+        dispatch(setTask(res));
+      }).catch((err) => {
+        console.log(err);
+      }
+      );
+    }).catch((err) => {
+      console.log(err);
+    }
+    );
   };
-
-  let importantTask = [
-    {
-      id: 1,
-      title: "Physics Assignment",
-      desc: "Do exercises at page 11 of Halliway Book",
-      date: "01-01-2022",
-      hours: "12:00 PM",
-    },
-  ];
 
   return (
     <LayoutPages>
@@ -58,29 +80,26 @@ const Home = () => {
         </Container>
         <Container id="contact-list">
           <h1 className="lg:text-[2rem] mt-[1rem] font-bold lg:text-left sm:text-[1.75rem] sm:text-center">
-            Favorite Contact
+            List of Task
           </h1>
-          {importantTask.length === 0 ? (
+          {task.length === 0 ? (
             <p className="lg:text-[1.25rem] font-[500] text-black mb-[1rem] text-center sm:text-[1.5rem]">
-              You don't have any favorite contact yet.
+              You don't have any tasks yet.
             </p>
           ) : (
             <div className="flex w-full lg:p-[0_5rem_0_5rem] flex-col gap-[1rem] sm:p-0">
               <div className="grid lg:grid-cols-[repeat(2,1fr)] gap-[1rem] sm:grid-cols-[repeat(1,1fr)]">
-                {importantTask.map((task) => (
+                {task.task.task.map((task: any) => (
                   <TaskList
                     key={task.id}
                     id={task.id}
                     title={task.title}
                     desc={task.desc}
                     date={task.date}
-                    hours={task.hours}
-                    isFavorite={importantTask.some(
-                      (impTask) => impTask.id === task.id
-                    )}
+                    status={task.status}
                     onFavoriteToggle={() => handleFavoriteToggle(task.id)}
                     onUnfavoriteToggle={() => handleUnfavoriteToggle(task.id)}
-                    onRemoveContact={() => handleRemoveTask(task.id)}
+                    onRemoveContact={() => handleRemoveTask(task._id)}
                     isEdit={isEdit}
                     setIsEdit={setIsEdit}
                     onClick={() => handleTaskClick(task)}
