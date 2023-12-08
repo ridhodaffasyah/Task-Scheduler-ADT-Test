@@ -1,13 +1,13 @@
 import React, { useState } from "react";
 import Image from "next/image";
-import { ListContactProps } from "@/utils/interface";
+import { ListTaskProps } from "@/utils/interface";
 
-const TaskList: React.FC<ListContactProps> = ({
+const TaskList: React.FC<ListTaskProps> = ({
   title,
   desc,
   date,
   status,
-  onRemoveContact,
+  onRemoveTask,
   onClick,
 }) => {
   const [isEditHovered, setIsEditHovered] = useState(false);
@@ -55,9 +55,9 @@ const TaskList: React.FC<ListContactProps> = ({
     const minutes: number = Math.floor(
       (timeRemaining % (1000 * 60 * 60)) / (1000 * 60)
     );
-    const seconds: number = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+    // const seconds: number = Math.floor((timeRemaining % (1000 * 60)) / 1000);
 
-    return { days, hours, minutes, seconds };
+    return { days, hours, minutes };
   };
 
   return (
@@ -138,7 +138,7 @@ const TaskList: React.FC<ListContactProps> = ({
               id="delete-btn"
               onMouseEnter={handleMouseEnter}
               onMouseLeave={handleMouseLeave}
-              onClick={onRemoveContact}
+              onClick={onRemoveTask}
             />
           </div>
         </div>

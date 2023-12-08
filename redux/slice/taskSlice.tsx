@@ -9,14 +9,18 @@ export const taskSlice = createSlice({
             date: '',
             status: '',
         },
+        showModalNotif: false,
     },
     reducers: {
         setTask: (state, action) => {
             state.task = action.payload;
         },
+        setShowModalNotif: (state, action) => {
+            state.showModalNotif = action.payload;
+        },
     },
 });
 
-export const { setTask } = taskSlice.actions;
+export const { setTask, setShowModalNotif } = taskSlice.actions;
 const taskReducer = taskSlice.reducer;
 export default taskReducer;

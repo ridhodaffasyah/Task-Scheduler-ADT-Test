@@ -8,7 +8,14 @@ import FormModal from "@/components/organism/Form";
 
 import { useSelector, useDispatch } from "react-redux";
 import { useGetTaskMutation, useDeleteTaskMutation } from "@/services/task";
-import { setTask } from "@/redux/slice/taskSlice";
+import { setTask, setShowModalNotif } from "@/redux/slice/taskSlice";
+import ListNotification from "@/components/molecule/ListNotification";
+
+interface TimeRemaining {
+  days: number;
+  hours: number;
+  minutes: number;
+}
 
 const Home = () => {
   const [isEdit, setIsEdit] = useState(false);
@@ -23,10 +30,11 @@ const Home = () => {
     "in-progress",
     "pending",
     "created",
-    "all"
+    "all",
   ]);
 
   const task = useSelector((state: any) => state.task);
+  const showModalNotif = useSelector((state: any) => state.task.showModalNotif);
 
   useEffect(() => {
     getTask({})
@@ -42,6 +50,7 @@ const Home = () => {
   const [listTask, setListTask] = useState(task.task);
 
   const dispatch = useDispatch();
+
   const [getTask] = useGetTaskMutation();
   const [deleteTask] = useDeleteTaskMutation();
 
@@ -132,15 +141,67 @@ const Home = () => {
   const handleFilterStatus = (e: React.ChangeEvent<HTMLSelectElement>) => {
     if (e.target.value === "all") {
       // Show all tasks
-      setListTask(task.task)
+      setListTask(task.task);
     } else {
       // Filter tasks based on the selected status
-      const filteredTasks = task.task?.task?.filter((task: any) => task.status === e.target.value);
-      setListTask({ task: filteredTasks});
+      const filteredTasks = task.task?.task?.filter(
+        (task: any) => task.status === e.target.value
+      );
+      setListTask({ task: filteredTasks });
     }
   };
 
-  console.log(listTask)
+  const calculateTimeRemaining = (date: any): TimeRemaining => {
+    // Convert the deadline string to a Date object
+    const deadline = new Date(date);
+
+    // Get the current time
+    const currentTime = new Date();
+
+    // Calculate the time difference in milliseconds
+    const timeRemaining = deadline.getTime() - currentTime.getTime();
+
+    // Convert milliseconds to days, hours, minutes, and seconds
+    const days: number = Math.floor(timeRemaining / (1000 * 60 * 60 * 24));
+    const hours: number = Math.floor(
+      (timeRemaining % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)
+    );
+    const minutes: number = Math.floor(
+      (timeRemaining % (1000 * 60 * 60)) / (1000 * 60)
+    );
+    // const seconds: number = Math.floor((timeRemaining % (1000 * 60)) / 1000);
+
+    return { days, hours, minutes };
+  };
+
+  const [listTaskDeadline, setListTaskDeadline] = useState<any>([]);
+  const [messageDeadline, setMessageDeadline] = useState<any>("");
+
+  const checkDeadline = (date: any) => {
+    const { days, hours, minutes } = calculateTimeRemaining(date);
+    if (days === 0) {
+      return {
+        bool: true,
+        msg: "Don't forget to complete your task, the deadline is today!",
+      };
+    }
+    return {
+      bool: false,
+      msg: "",
+    };
+  };
+
+  const updateListTaskDeadline = () => {
+    const updatedListTaskDeadline = listTask.task?.filter(
+      (task: any) => checkDeadline(task.date).bool
+    );
+    setListTaskDeadline(updatedListTaskDeadline);
+    setMessageDeadline(checkDeadline(listTask.task[0]?.date).msg);
+  };
+
+  useEffect(() => {
+    updateListTaskDeadline();
+  }, []);
 
   return (
     <LayoutPages>
@@ -182,25 +243,25 @@ const Home = () => {
                     height={25}
                   />
                 </div>
-                  <select
-                    className="p-[0.25rem_0.5rem] capitalize shadow-[0_0_0.1rem_rgba(0,0,0,0.25)] text-black rounded-[0.25rem] md:text-[1rem] md:w-full w-1/2 md:h-[2.5rem] h-[2rem] outline-none transition-all duration-[0.25s] ease-in-out cursor-pointer focus:border-[1px_solid_black] focus:shadow-[0_0_0.5rem_rgba(0,0,0,0.25)] text-[0.75rem]"
-                    id="filter-status"
-                    value={filteredStatus}
-                    onChange={(e) => {
-                      setFilteredStatus(e.target.value);
-                      handleFilterStatus(e);
-                    }}
-                  >
-                    <option value="" hidden disabled selected>
-                      {filteredStatus}
+                <select
+                  className="p-[0.25rem_0.5rem] capitalize shadow-[0_0_0.1rem_rgba(0,0,0,0.25)] text-black rounded-[0.25rem] md:text-[1rem] md:w-full w-1/2 md:h-[2.5rem] h-[2rem] outline-none transition-all duration-[0.25s] ease-in-out cursor-pointer focus:border-[1px_solid_black] focus:shadow-[0_0_0.5rem_rgba(0,0,0,0.25)] text-[0.75rem]"
+                  id="filter-status"
+                  value={filteredStatus}
+                  onChange={(e) => {
+                    setFilteredStatus(e.target.value);
+                    handleFilterStatus(e);
+                  }}
+                >
+                  <option value="" hidden disabled selected>
+                    {filteredStatus}
+                  </option>
+                  {statusOptions.map((option) => (
+                    <option className="capitalize" key={option} value={option}>
+                      {option}
                     </option>
-                    {statusOptions.map((option) => (
-                      <option className="capitalize" key={option} value={option}>
-                        {option}
-                      </option>
-                    ))}
-                  </select>
-                </div>
+                  ))}
+                </select>
+              </div>
               <div
                 className="flex items-center md:m-0 m-auto md:justify-between gap-[0.75rem] p-[0.75rem] md:w-auto w-1/2 justify-center hover:cursor-pointer hover:font-bold"
                 onClick={handleAddButton}
@@ -240,7 +301,7 @@ const Home = () => {
                     desc={task.desc}
                     date={task.date}
                     status={task.status}
-                    onRemoveContact={() => handleRemoveTask(task._id)}
+                    onRemoveTask={() => handleRemoveTask(task._id)}
                     isEdit={isEdit}
                     setIsEdit={setIsEdit}
                     onClick={() => handleTaskClick(task)}
@@ -263,6 +324,16 @@ const Home = () => {
           selectedTask={selectedTask}
           showErrorMessage={showErrorMessage}
           showSuccessMessage={showSuccessMessage}
+        />
+      )}
+      {showModalNotif && (
+        <ListNotification
+          listTaskDeadline={listTaskDeadline}
+          messageDeadline={messageDeadline}
+          onRemoveTask={() => handleRemoveTask(task._id)}
+          isEdit={isEdit}
+          setIsEdit={setIsEdit}
+          onClick={() => handleTaskClick(task)}
         />
       )}
     </LayoutPages>

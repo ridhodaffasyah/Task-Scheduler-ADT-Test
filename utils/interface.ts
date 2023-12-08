@@ -18,7 +18,7 @@ export interface ContainerProps {
   id?: string;
 }
 
-export interface ListContactProps {
+export interface ListTaskProps {
   id?: number;
   title?: string;
   desc: string;
@@ -26,7 +26,7 @@ export interface ListContactProps {
   status?: string;
   isFavorite?: boolean;
   isEdit: boolean;
-  onRemoveContact?: () => void;
+  onRemoveTask?: () => void;
   setIsEdit: (value: boolean) => void;
   onClick?: () => void;
 }
@@ -44,4 +44,13 @@ export interface FormModalProps {
   setIsEdit: (value: boolean) => void;
   isEdit: boolean;
   selectedTask: any;
+}
+
+export interface ListNotificationProps {
+  messageDeadline: string;
+  listTaskDeadline: [];
+  isEdit: boolean;
+  onRemoveTask?: () => void;
+  setIsEdit: (value: boolean) => void;
+  onClick?: () => void;
 }

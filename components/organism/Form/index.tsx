@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { FormModalProps } from "@/utils/interface";
-import { useSelector, useDispatch } from "react-redux";
+import { useDispatch } from "react-redux";
 import {
   useAddTaskMutation,
   useGetTaskMutation,
@@ -22,7 +22,12 @@ const FormModal: React.FC<FormModalProps> = ({
   const [desc, setDesc] = useState("");
   const [date, setDate] = useState("");
   const [visible, setVisible] = useState(true);
-  const [statusOptions] = useState(["done", "in-progress", "pending", "created"]);
+  const [statusOptions] = useState([
+    "done",
+    "in-progress",
+    "pending",
+    "created",
+  ]);
   const [status, setStatus] = useState("created");
 
   const dispatch = useDispatch();
@@ -42,8 +47,6 @@ const FormModal: React.FC<FormModalProps> = ({
   const padWithZero = (value: number) => {
     return value < 10 ? `0${value}` : `${value}`;
   };
-
-  console.log(status)
 
   useEffect(() => {
     // Populate the form fields with the selected contact data when editing
@@ -189,15 +192,13 @@ const FormModal: React.FC<FormModalProps> = ({
   };
 
   // Function to fetch the updated task data from the database
-  const fetchUpdatedTask = () => {
-    return getTask({})
-      .unwrap()
-      .then((res) => {
-        dispatch(setTask(res));
-      })
-      .catch((err) => {
-        console.log(err);
-      });
+  const fetchUpdatedTask = async () => {
+    try {
+      const res = await getTask({}).unwrap();
+      dispatch(setTask(res));
+    } catch (err) {
+      console.log(err);
+    }
   };
 
   return (
@@ -275,19 +276,21 @@ const FormModal: React.FC<FormModalProps> = ({
                 Task Status
               </label>
               <select
-              disabled={!isEdit}
-              className="p-[1rem_0.5rem] shadow-[0_0_0.1rem_rgba(0,0,0,0.25)] text-black rounded-[0.25rem] lg:text-[1rem] outline-none transition-all duration-[0.25s] ease-in-out cursor-pointer focus:border-[1px_solid_black] focus:shadow-[0_0_0.5rem_rgba(0,0,0,0.25)] sm:text-[0.75rem]"
-              id="task-status"
-              value={status}
-              onChange={(e) => setStatus(e.target.value)}
+                disabled={!isEdit}
+                className="p-[1rem_0.5rem] shadow-[0_0_0.1rem_rgba(0,0,0,0.25)] text-black rounded-[0.25rem] lg:text-[1rem] outline-none transition-all duration-[0.25s] ease-in-out cursor-pointer focus:border-[1px_solid_black] focus:shadow-[0_0_0.5rem_rgba(0,0,0,0.25)] sm:text-[0.75rem]"
+                id="task-status"
+                value={status}
+                onChange={(e) => setStatus(e.target.value)}
               >
-                <option value="" hidden disabled selected>{status}</option>
-              {statusOptions.map((option) => (
-                <option key={option} value={option}>
-                  {option}
+                <option value="" hidden disabled selected>
+                  {status}
                 </option>
-              ))}
-            </select>
+                {statusOptions.map((option) => (
+                  <option key={option} value={option}>
+                    {option}
+                  </option>
+                ))}
+              </select>
             </div>
             <button
               className="p-[0.5rem_1rem] border-[1px_solid_black] rounded-[0.25rem] bg-black text-white text-[1rem] font-bold outline-none transition-all duration-[0.25s] ease-in-out hover:bg-orange-300 hover:text-white hover:cursor-pointer hover:border-[1px_solid_orange]"
