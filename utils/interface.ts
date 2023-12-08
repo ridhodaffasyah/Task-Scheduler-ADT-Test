@@ -40,10 +40,10 @@ export interface PopupMessageProps {
 export interface FormModalProps {
   setIsShowModal: (value: boolean) => void;
   updateListTask: (value: any) => void;
-  updateEditedContact: (value: any) => void;
+  updateEditedTask: (value: any) => void;
   showErrorMessage: (value: string) => void;
   showSuccessMessage: (value: string) => void;
   setIsEdit: (value: boolean) => void;
   isEdit: boolean;
-  selectedContact: any;
+  selectedTask: any;
 }

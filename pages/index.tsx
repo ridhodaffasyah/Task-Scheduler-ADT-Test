@@ -19,12 +19,12 @@ const Home = () => {
   const [isError, setIsError] = useState(false);
   const [message, setMessage] = useState("");
   const [isShowModal, setIsShowModal] = useState(false);
-  const [selectedContact, setSelectedContact] = useState(null);
+  const [selectedTask, setSelectedTask] = useState(null);
 
   const task = useSelector((state: any) => state.task);
 
   useEffect(() => {
-    getTask()
+    getTask({})
       .unwrap()
       .then((res) => {
         dispatch(setTask(res));
@@ -43,7 +43,9 @@ const Home = () => {
   const [deleteTask] = useDeleteTaskMutation();
 
   const handleTaskClick = (task: any) => {
-    console.log(task);
+    setSelectedTask(task);
+    setIsEdit(true);
+    setIsShowModal(true);
   };
 
   const handleFavoriteToggle = (id: any) => {
@@ -84,7 +86,7 @@ const Home = () => {
     deleteTask(id)
       .unwrap()
       .then((res) => {
-        getTask()
+        getTask({})
           .unwrap()
           .then((res) => {
             dispatch(setTask(res));
@@ -120,25 +122,15 @@ const Home = () => {
     setListTask({ task: [...listTask.task, newTask] });
   };
   
-  const updateEditedContact = (updatedContact: any) => {
-    // // Update the contacts state with the updated contact
-    // const updatedContacts = contacts.map((contact) =>
-    //   contact.id === updatedContact.id ? updatedContact : contact
-    // );
+  const updateEditedTask = (updatedTask: any) => {
+    const updatedTaskList = listTask.task?.map((task: any) => {
+      if (task._id === updatedTask._id) {
+        return updatedTask;
+      }
+      return task;
+    });
 
-    // // Update the favoriteContacts state with the updated contact
-    // const updatedFavoriteContacts = favoriteContacts.map((contact) =>
-    //   contact.id === updatedContact.id ? updatedContact : contact
-    // );
-
-    // // Save favoriteContacts to localStorage
-    // localStorage.setItem(
-    //   "favoriteContacts",
-    //   JSON.stringify(updatedFavoriteContacts)
-    // );
-
-    // setFavoriteContacts(updatedFavoriteContacts);
-    // setContacts(updatedContacts);
+    setListTask({ task: updatedTaskList });
   };
 
 
@@ -182,7 +174,7 @@ const Home = () => {
               <span>Add Task</span>
             </div>
             <input
-              className="lg:w-[40%] lg:h-[2.5rem] rounded-[0.5rem] border-[1px_solid_#000] p-[0_1rem] lg:text-[1rem] font-[500] text-black outline-none transition-all duration-[0.25s] ease-in-out focus:shadow-[0_0_0.5rem_rgba(0,0,0,0.25)] sm:text-[0.75rem] sm:w-full sm:h-[2rem]"
+              className="lg:w-[40%] lg:h-[2.5rem] shadow-[0_0_0.1rem_rgba(0,0,0,0.5)] rounded-[0.5rem] border-[1px_solid_#000] p-[0_1rem] lg:text-[1rem] font-[500] text-black outline-none transition-all duration-[0.25s] ease-in-out focus:shadow-[0_0_0.5rem_rgba(0,0,0,0.25)] sm:text-[0.75rem] sm:w-full sm:h-[2rem]"
               type="text"
               placeholder="Search Task..."
               onInput={handleSearch}
@@ -224,10 +216,10 @@ const Home = () => {
         <FormModal
           setIsShowModal={setIsShowModal}
           updateListTask={updateListTask}
-          updateEditedContact={updateEditedContact}
+          updateEditedTask={updateEditedTask}
           isEdit={isEdit}
           setIsEdit={setIsEdit}
-          selectedContact={selectedContact}
+          selectedTask={selectedTask}
           showErrorMessage={showErrorMessage}
           showSuccessMessage={showSuccessMessage}
         />

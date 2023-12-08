@@ -43,7 +43,6 @@ const TaskList: React.FC<ListContactProps> = ({
     return `${day} ${month} ${year}`;
   };
 
-
   const calculateTimeRemaining = (date: any) => {
     // Convert the deadline string to a Date object
     const deadline = new Date(date);
@@ -82,7 +81,7 @@ const TaskList: React.FC<ListContactProps> = ({
               {convertDate(date)}
             </p>
             {
-              calculateTimeRemaining(date).days > 0 ? (
+              calculateTimeRemaining(date).minutes > 0 ? (
                 <span>Remaining time: {`${calculateTimeRemaining(date).days} Days ${calculateTimeRemaining(date).hours} Hours ${calculateTimeRemaining(date).minutes} Minutes`}</span>
               ) : (
                 <span className="italic">Out of date or The task already finished!</span>
