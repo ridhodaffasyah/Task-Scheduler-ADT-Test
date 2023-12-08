@@ -58,7 +58,7 @@ const Home = () => {
   const endIndex = startIndex + itemsPerPage;
 
   // Slice the contacts for the current page
-  const currentPageTask = listTask.task.slice(startIndex, endIndex);
+  const currentPageTask = listTask.task?.slice(startIndex, endIndex);
 
   const handlePageChange = (page: number) => {
     setCurrentPage(page);
