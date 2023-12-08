@@ -39,8 +39,6 @@ const Home = () => {
       });
   }, []);
 
-  console.log(task);
-
   const [listTask, setListTask] = useState(task.task);
 
   const dispatch = useDispatch();
@@ -51,14 +49,6 @@ const Home = () => {
     setSelectedTask(task);
     setIsEdit(true);
     setIsShowModal(true);
-  };
-
-  const handleFavoriteToggle = (id: any) => {
-    console.log(id);
-  };
-
-  const handleUnfavoriteToggle = (id: any) => {
-    console.log(id);
   };
 
   const showSuccessMessage = (message: string) => {
@@ -146,7 +136,6 @@ const Home = () => {
     } else {
       // Filter tasks based on the selected status
       const filteredTasks = task.task?.task?.filter((task: any) => task.status === e.target.value);
-      console.log(filteredTasks)
       setListTask({ task: filteredTasks});
     }
   };
@@ -158,18 +147,18 @@ const Home = () => {
       <div className='bg-[url("/images/background.jpg")] bg-cover bg-center bg-no-repeat h-[100vh] w-full opacity-[0.06]' />
       <div className="h-[100vh] w-full">
         <Container isLandingPage>
-          <div className="flex flex-col lg:justify-center lg:text-left lg:items-start w-[65%] h-full sm:items-center sm:justify-end sm:text-center">
-            <h1 className="lg:text-[5rem] font-[900] text-black mb-[1rem] uppercase sm:text-[2rem]">
+          <div className="flex flex-col md:justify-center md:text-left md:items-start w-[65%] h-full items-center justify-end text-center">
+            <h1 className="md:text-[5rem] font-[900] text-black mb-[1rem] uppercase text-[2rem]">
               Task Scheduler
             </h1>
-            <h2 className="lg:text-[1.75rem] font-[500] text-black mb-[1rem] sm:text-[1.25rem]">
-              <span className="lg:text-[2rem] underline decoration-black lg:decoration-[0.25rem] underline-offset-[0.6rem] sm:decoration-[0.15rem] sm:text-[1.25rem]">
+            <h2 className="md:text-[1.75rem] font-[500] text-black mb-[1rem] text-[1.25rem]">
+              <span className="md:text-[2rem] underline decoration-black md:decoration-[0.25rem] underline-offset-[0.6rem] decoration-[0.15rem] text-[1.25rem]">
                 Manage
               </span>{" "}
               your task, for the better future!
             </h2>
           </div>
-          <div className="flex lg:flex-row lg:w-full lg:h-full items-center lg:justify-end relative z-[2] sm:w-[70%] sm:h-[80%] sm:mt-[1rem] sm:mb-[2rem] sm:flex-col sm:justify-start">
+          <div className="flex md:flex-row md:w-full md:h-full items-center md:justify-end relative z-[2] w-[70%] h-[80%] mt-[1rem] mb-[2rem] flex-col justify-start">
             <img
               className="w-[60%] h-auto drop-shadow-[0_0_0.75rem_rgba(0,0,0,0.5)]"
               src="/images/cartoon-2.png"
@@ -178,22 +167,23 @@ const Home = () => {
           </div>
         </Container>
         <Container id="contact-list">
-          <div className="flex justify-between items-center mt-[1rem]">
-            <h1 className="lg:text-[2rem] font-bold lg:text-left sm:text-[1.75rem] sm:text-center">
+          <div className="flex md:flex-row flex-col justify-between items-center mt-[1rem] md:gap-0 gap-[1rem]">
+            <h1 className="md:text-[2rem] font-bold md:text-left text-[1.5rem] text-center">
               List of Task
             </h1>
-            <div className="flex lg:flex-row items-center lg:justify-end lg:w-[50%] lg:gap-[2rem] sm:w-full sm:flex-col sm:gap-[0.25rem] sm:justify-center">
+            <div className="flex md:flex-row md:items-center md:justify-end md:w-[50%] md:gap-[2rem] w-full flex-col gap-[0.25rem] justify-center">
+              <div className="flex flex-row items-center justify-center gap-[1rem]">
                 <div className="w-[25px] h-[25px] flex items-center justify-center">
                   <Image
                     src="/images/filter.png"
                     alt="add"
+                    className="w-[20px] h-[20px] md:w-[25px] md:h-[25px]"
                     width={25}
                     height={25}
                   />
                 </div>
-                <div className="flex flex-col gap-[0.25rem]">
                   <select
-                    className="p-[0.25rem_0.5rem] capitalize shadow-[0_0_0.1rem_rgba(0,0,0,0.25)] text-black rounded-[0.25rem] lg:text-[1rem] h-[2.5rem] outline-none transition-all duration-[0.25s] ease-in-out focus:border-[1px_solid_black] focus:shadow-[0_0_0.5rem_rgba(0,0,0,0.25)] sm:text-[0.75rem]"
+                    className="p-[0.25rem_0.5rem] capitalize shadow-[0_0_0.1rem_rgba(0,0,0,0.25)] text-black rounded-[0.25rem] md:text-[1rem] md:w-full w-1/2 md:h-[2.5rem] h-[2rem] outline-none transition-all duration-[0.25s] ease-in-out cursor-pointer focus:border-[1px_solid_black] focus:shadow-[0_0_0.5rem_rgba(0,0,0,0.25)] text-[0.75rem]"
                     id="filter-status"
                     value={filteredStatus}
                     onChange={(e) => {
@@ -212,13 +202,14 @@ const Home = () => {
                   </select>
                 </div>
               <div
-                className="flex items-center justify-between gap-[0.75rem] p-[0.75rem] hover:cursor-pointer hover:font-bold"
+                className="flex items-center md:m-0 m-auto md:justify-between gap-[0.75rem] p-[0.75rem] md:w-auto w-1/2 justify-center hover:cursor-pointer hover:font-bold"
                 onClick={handleAddButton}
               >
                 <div className="w-[25px] h-[25px] flex items-center justify-center">
                   <Image
                     src="/images/add.png"
                     alt="add"
+                    className="w-[20px] h-[20px] md:w-[25px] md:h-[25px]"
                     width={25}
                     height={25}
                   />
@@ -226,7 +217,7 @@ const Home = () => {
                 <span>Add Task</span>
               </div>
               <input
-                className="lg:w-[40%] lg:h-[2.5rem] shadow-[0_0_0.1rem_rgba(0,0,0,0.5)] rounded-[0.5rem] border-[1px_solid_#000] p-[0_1rem] lg:text-[1rem] font-[500] text-black outline-none transition-all duration-[0.25s] ease-in-out focus:shadow-[0_0_0.5rem_rgba(0,0,0,0.25)] sm:text-[0.75rem] sm:w-full sm:h-[2rem]"
+                className="md:w-[40%] md:h-[2.5rem] shadow-[0_0_0.1rem_rgba(0,0,0,0.5)] rounded-[0.5rem] border-[1px_solid_#000] p-[0_1rem] md:text-[1rem] font-[500] text-black outline-none transition-all duration-[0.25s] ease-in-out focus:shadow-[0_0_0.5rem_rgba(0,0,0,0.25)] text-[0.75rem] w-full h-[2rem] mb-[2rem] md:mb-0"
                 type="text"
                 placeholder="Search Task..."
                 onInput={handleSearch}
@@ -239,8 +230,8 @@ const Home = () => {
               You don't have any tasks yet.
             </p>
           ) : (
-            <div className="flex w-full lg:p-[0_5rem_0_5rem] flex-col gap-[1rem] sm:p-0">
-              <div className="grid lg:grid-cols-[repeat(2,1fr)] gap-[1rem] sm:grid-cols-[repeat(1,1fr)]">
+            <div className="flex w-full md:p-[0_5rem_0_5rem] flex-col gap-[1rem] p-0">
+              <div className="grid md:grid-cols-[repeat(2,1fr)] gap-[1rem] grid-cols-[repeat(1,1fr)]">
                 {listTask.task?.map((task: any) => (
                   <TaskList
                     key={task.id}
@@ -249,8 +240,6 @@ const Home = () => {
                     desc={task.desc}
                     date={task.date}
                     status={task.status}
-                    onFavoriteToggle={() => handleFavoriteToggle(task.id)}
-                    onUnfavoriteToggle={() => handleUnfavoriteToggle(task.id)}
                     onRemoveContact={() => handleRemoveTask(task._id)}
                     isEdit={isEdit}
                     setIsEdit={setIsEdit}

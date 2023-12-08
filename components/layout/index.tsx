@@ -17,10 +17,15 @@ const LayoutPages: React.FC<LayoutProps> = ({ children }) => {
   return (
     <main>
       <Navbar>
-        <div className="flex items-center justify-start max-w-[30%] h-auto">
+        <div className="flex items-center md:justify-start md:max-w-[30%] h-auto max-w-full justify-center">
           <Image src="/images/logo.png" alt="logo" width={220} height={30} />
         </div>
-        <Button isExplore text="Explore" handleButton={handleButtonExplore} />
+        <div className="flex justify-between items-center md:flex-row flex-col md:max-w-[12%] w-1/2">
+          <div className="flex items-center justify-start max-w-[20%] h-auto hover:cursor-pointer">
+            <Image src="/images/notification-deactive.png" alt="logo" width={30} height={30} />
+          </div>
+          <Button isExplore text="Explore" handleButton={handleButtonExplore} />
+        </div>
       </Navbar>
       {children}
     </main>

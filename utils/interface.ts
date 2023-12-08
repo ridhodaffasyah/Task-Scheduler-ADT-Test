@@ -26,8 +26,6 @@ export interface ListContactProps {
   status?: string;
   isFavorite?: boolean;
   isEdit: boolean;
-  onFavoriteToggle?: () => void;
-  onUnfavoriteToggle?: () => void;
   onRemoveContact?: () => void;
   setIsEdit: (value: boolean) => void;
   onClick?: () => void;

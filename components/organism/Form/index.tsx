@@ -276,7 +276,7 @@ const FormModal: React.FC<FormModalProps> = ({
               </label>
               <select
               disabled={!isEdit}
-              className="p-[1rem_0.5rem] shadow-[0_0_0.1rem_rgba(0,0,0,0.25)] text-black rounded-[0.25rem] lg:text-[1rem] outline-none transition-all duration-[0.25s] ease-in-out focus:border-[1px_solid_black] focus:shadow-[0_0_0.5rem_rgba(0,0,0,0.25)] sm:text-[0.75rem]"
+              className="p-[1rem_0.5rem] shadow-[0_0_0.1rem_rgba(0,0,0,0.25)] text-black rounded-[0.25rem] lg:text-[1rem] outline-none transition-all duration-[0.25s] ease-in-out cursor-pointer focus:border-[1px_solid_black] focus:shadow-[0_0_0.5rem_rgba(0,0,0,0.25)] sm:text-[0.75rem]"
               id="task-status"
               value={status}
               onChange={(e) => setStatus(e.target.value)}
