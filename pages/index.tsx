@@ -51,7 +51,7 @@ const Home = () => {
       });
   }, []);
 
-  const [listTask, setListTask] = useState(task.task);
+  const [listTask, setListTask] = useState(task?.task);
 
   // Calculate the start and end index for the current page
   const startIndex = (currentPage - 1) * itemsPerPage;
