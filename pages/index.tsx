@@ -64,7 +64,7 @@ const Home = () => {
     setCurrentPage(page);
   };
 
-  const totalPages = Math.ceil(listTask.task.length / itemsPerPage);
+  const totalPages = Math.ceil(listTask.task?.length / itemsPerPage);
 
   const dispatch = useDispatch();
 
