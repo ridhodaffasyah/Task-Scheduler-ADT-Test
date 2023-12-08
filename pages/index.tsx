@@ -4,11 +4,11 @@ import LayoutPages from "@/components/layout";
 import TaskList from "@/components/molecule/ListTask";
 import Container from "@/components/organism/Container";
 import PopupMessage from "@/components/atom/PopUpMessage";
+import FormModal from "@/components/organism/Form";
 
 import { useSelector, useDispatch } from "react-redux";
 import {
   useGetTaskMutation,
-  useAddTaskMutation,
   useDeleteTaskMutation,
 } from "@/services/task";
 import { setTask } from "@/redux/slice/taskSlice";
@@ -35,13 +35,16 @@ const Home = () => {
   }, []);
 
   console.log(task);
-
+  
   const [listTask, setListTask] = useState(task.task);
 
   const dispatch = useDispatch();
   const [getTask] = useGetTaskMutation();
-  const [addTask] = useAddTaskMutation();
   const [deleteTask] = useDeleteTaskMutation();
+
+  const handleTaskClick = (task: any) => {
+    console.log(task);
+  };
 
   const handleFavoriteToggle = (id: any) => {
     console.log(id);
@@ -73,7 +76,7 @@ const Home = () => {
     }, 3000);
   };
 
-  const handleAddContact = () => {
+  const handleAddButton = () => {
     setIsShowModal(true);
   };
 
@@ -87,6 +90,8 @@ const Home = () => {
             dispatch(setTask(res));
             setIsSuccess(true);
             showSuccessMessage("Task deleted successfully!");
+            // Update the listTask state with the new task list
+            setListTask({ task: res.task });
           })
           .catch((err) => {
             console.log(err);
@@ -104,11 +109,38 @@ const Home = () => {
       setListTask(task.task);
     } else {
       const filteredTask = task.task?.task?.filter((task: any) =>
-        task.title.toLowerCase().includes(e.target.value.toLowerCase())
+        task.title.toLowerCase().includes(e.target.value.toLowerCase()) || 
+        task.status.toLowerCase().includes(e.target.value.toLowerCase())
       );
       setListTask({ task: filteredTask });
     }
   };
+
+  const updateListTask = (newTask: any) => {
+    setListTask({ task: [...listTask.task, newTask] });
+  };
+  
+  const updateEditedContact = (updatedContact: any) => {
+    // // Update the contacts state with the updated contact
+    // const updatedContacts = contacts.map((contact) =>
+    //   contact.id === updatedContact.id ? updatedContact : contact
+    // );
+
+    // // Update the favoriteContacts state with the updated contact
+    // const updatedFavoriteContacts = favoriteContacts.map((contact) =>
+    //   contact.id === updatedContact.id ? updatedContact : contact
+    // );
+
+    // // Save favoriteContacts to localStorage
+    // localStorage.setItem(
+    //   "favoriteContacts",
+    //   JSON.stringify(updatedFavoriteContacts)
+    // );
+
+    // setFavoriteContacts(updatedFavoriteContacts);
+    // setContacts(updatedContacts);
+  };
+
 
   return (
     <LayoutPages>
@@ -140,29 +172,24 @@ const Home = () => {
               List of Task
             </h1>
             <div className="flex lg:flex-row items-center lg:justify-end lg:w-[50%] lg:gap-[2rem] sm:w-full sm:flex-col sm:gap-[0.25rem] sm:justify-center">
-              <div
-                className="flex items-center justify-between gap-[0.75rem] p-[0.75rem] hover:cursor-pointer hover:font-bold"
-                onClick={handleAddContact}
-              >
-                <div className="w-[25px] h-[25px] flex items-center justify-center">
-                  <Image
-                    src="/images/add.png"
-                    alt="add"
-                    width={25}
-                    height={25}
-                  />
-                </div>
-                <span>Add Contact</span>
+            <div
+              className="flex items-center justify-between gap-[0.75rem] p-[0.75rem] hover:cursor-pointer hover:font-bold"
+              onClick={handleAddButton}
+            >
+              <div className="w-[25px] h-[25px] flex items-center justify-center">
+                <Image src="/images/add.png" alt="add" width={25} height={25} />
               </div>
-              <input
-                className="lg:w-[40%] lg:h-[2.5rem] rounded-[0.5rem] border-[1px_solid_#000] p-[0_1rem] lg:text-[1rem] font-[500] text-black outline-none transition-all duration-[0.25s] ease-in-out focus:shadow-[0_0_0.5rem_rgba(0,0,0,0.25)] sm:text-[0.75rem] sm:w-full sm:h-[2rem]"
-                type="text"
-                placeholder="Search Contact..."
-                onInput={handleSearch}
-              />
+              <span>Add Task</span>
             </div>
+            <input
+              className="lg:w-[40%] lg:h-[2.5rem] rounded-[0.5rem] border-[1px_solid_#000] p-[0_1rem] lg:text-[1rem] font-[500] text-black outline-none transition-all duration-[0.25s] ease-in-out focus:shadow-[0_0_0.5rem_rgba(0,0,0,0.25)] sm:text-[0.75rem] sm:w-full sm:h-[2rem]"
+              type="text"
+              placeholder="Search Task..."
+              onInput={handleSearch}
+            />
           </div>
-
+          </div>
+          
           {task.length === 0 ? (
             <p className="lg:text-[1.25rem] font-[500] text-black mb-[1rem] text-center sm:text-[1.5rem]">
               You don't have any tasks yet.
@@ -193,18 +220,18 @@ const Home = () => {
       </div>
       {isSuccess && <PopupMessage message={message} type="success" />}
       {isError && <PopupMessage message={message} type="error" />}
-      {/* {(isShowModal || isEdit) && (
+      {(isShowModal || isEdit) && (
         <FormModal
           setIsShowModal={setIsShowModal}
-          // updateContactsList={updateContactsList}
-          // updateEditedContact={updateEditedContact}
+          updateListTask={updateListTask}
+          updateEditedContact={updateEditedContact}
           isEdit={isEdit}
           setIsEdit={setIsEdit}
           selectedContact={selectedContact}
           showErrorMessage={showErrorMessage}
           showSuccessMessage={showSuccessMessage}
         />
-      )} */}
+      )}
     </LayoutPages>
   );
 };
