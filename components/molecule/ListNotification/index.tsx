@@ -39,19 +39,25 @@ const ListNotification: React.FC<ListNotificationProps> = ({
           </p>
         </div>
         <div className="flex gap-[1rem] flex-col items-center justify-center">
-          {listTaskDeadline.map((item: any) => (
-            <TaskList
-              key={item._id}
-              title={item.title}
-              desc={item.desc}
-              date={item.date}
-              status={item.status}
-              onRemoveTask={onRemoveTask}
-              isEdit={isEdit}
-              setIsEdit={setIsEdit}
-              onClick={onClick}
-            />
-          ))}
+          {listTaskDeadline.length > 0 ? (
+            listTaskDeadline.map((item: any) => (
+              <TaskList
+                key={item._id}
+                title={item.title}
+                desc={item.desc}
+                date={item.date}
+                status={item.status}
+                onRemoveTask={onRemoveTask}
+                isEdit={isEdit}
+                setIsEdit={setIsEdit}
+                onClick={onClick}
+              />
+            ))
+          ) : (
+            <p className="text-black font-bold text-[1.25rem]">
+              No Notification Found!
+            </p>
+          )}
         </div>
       </div>
     </div>
