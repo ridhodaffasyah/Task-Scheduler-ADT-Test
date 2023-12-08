@@ -54,3 +54,15 @@ export interface ListNotificationProps {
   setIsEdit: (value: boolean) => void;
   onClick?: () => void;
 }
+
+export interface Paginationrops {
+  currentPage: number;
+  totalPages: number;
+  onPageChange: (page: number) => void;
+}
+
+export interface PaginationItemProps {
+  page?: number;
+  className?: string;
+  onClick?: any;
+}

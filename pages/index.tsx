@@ -5,6 +5,7 @@ import TaskList from "@/components/molecule/ListTask";
 import Container from "@/components/organism/Container";
 import PopupMessage from "@/components/atom/PopUpMessage";
 import FormModal from "@/components/organism/Form";
+import Pagination from "@/components/molecule/Pagination";
 
 import { useSelector, useDispatch } from "react-redux";
 import { useGetTaskMutation, useDeleteTaskMutation } from "@/services/task";
@@ -36,6 +37,9 @@ const Home = () => {
   const task = useSelector((state: any) => state.task);
   const showModalNotif = useSelector((state: any) => state.task.showModalNotif);
 
+  const itemsPerPage = 10;
+  const [currentPage, setCurrentPage] = useState(1);
+
   useEffect(() => {
     getTask({})
       .unwrap()
@@ -48,6 +52,19 @@ const Home = () => {
   }, []);
 
   const [listTask, setListTask] = useState(task.task);
+
+  // Calculate the start and end index for the current page
+  const startIndex = (currentPage - 1) * itemsPerPage;
+  const endIndex = startIndex + itemsPerPage;
+
+  // Slice the contacts for the current page
+  const currentPageTask = listTask.task.slice(startIndex, endIndex);
+
+  const handlePageChange = (page: number) => {
+    setCurrentPage(page);
+  };
+
+  const totalPages = Math.ceil(listTask.task.length / itemsPerPage);
 
   const dispatch = useDispatch();
 
@@ -293,7 +310,7 @@ const Home = () => {
           ) : (
             <div className="flex w-full md:p-[0_5rem_0_5rem] flex-col gap-[1rem] p-0">
               <div className="grid md:grid-cols-[repeat(2,1fr)] gap-[1rem] grid-cols-[repeat(1,1fr)]">
-                {listTask.task?.map((task: any) => (
+                {currentPageTask?.map((task: any) => (
                   <TaskList
                     key={task.id}
                     id={task.id}
@@ -311,6 +328,13 @@ const Home = () => {
             </div>
           )}
         </Container>
+        <div className="flex justify-center items-center">
+            <Pagination
+              currentPage={currentPage}
+              totalPages={totalPages}
+              onPageChange={handlePageChange}
+            />
+          </div>
       </div>
       {isSuccess && <PopupMessage message={message} type="success" />}
       {isError && <PopupMessage message={message} type="error" />}
