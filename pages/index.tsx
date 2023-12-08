@@ -7,10 +7,7 @@ import PopupMessage from "@/components/atom/PopUpMessage";
 import FormModal from "@/components/organism/Form";
 
 import { useSelector, useDispatch } from "react-redux";
-import {
-  useGetTaskMutation,
-  useDeleteTaskMutation,
-} from "@/services/task";
+import { useGetTaskMutation, useDeleteTaskMutation } from "@/services/task";
 import { setTask } from "@/redux/slice/taskSlice";
 
 const Home = () => {
@@ -20,6 +17,14 @@ const Home = () => {
   const [message, setMessage] = useState("");
   const [isShowModal, setIsShowModal] = useState(false);
   const [selectedTask, setSelectedTask] = useState(null);
+  const [filteredStatus, setFilteredStatus] = useState("all");
+  const [statusOptions] = useState([
+    "done",
+    "in-progress",
+    "pending",
+    "created",
+    "all"
+  ]);
 
   const task = useSelector((state: any) => state.task);
 
@@ -35,7 +40,7 @@ const Home = () => {
   }, []);
 
   console.log(task);
-  
+
   const [listTask, setListTask] = useState(task.task);
 
   const dispatch = useDispatch();
@@ -110,9 +115,10 @@ const Home = () => {
     if (e.target.value === "") {
       setListTask(task.task);
     } else {
-      const filteredTask = task.task?.task?.filter((task: any) =>
-        task.title.toLowerCase().includes(e.target.value.toLowerCase()) || 
-        task.status.toLowerCase().includes(e.target.value.toLowerCase())
+      const filteredTask = task.task?.task?.filter(
+        (task: any) =>
+          task.title.toLowerCase().includes(e.target.value.toLowerCase()) ||
+          task.status.toLowerCase().includes(e.target.value.toLowerCase())
       );
       setListTask({ task: filteredTask });
     }
@@ -121,7 +127,7 @@ const Home = () => {
   const updateListTask = (newTask: any) => {
     setListTask({ task: [...listTask.task, newTask] });
   };
-  
+
   const updateEditedTask = (updatedTask: any) => {
     const updatedTaskList = listTask.task?.map((task: any) => {
       if (task._id === updatedTask._id) {
@@ -133,6 +139,19 @@ const Home = () => {
     setListTask({ task: updatedTaskList });
   };
 
+  const handleFilterStatus = (e: React.ChangeEvent<HTMLSelectElement>) => {
+    if (e.target.value === "all") {
+      // Show all tasks
+      setListTask(task.task)
+    } else {
+      // Filter tasks based on the selected status
+      const filteredTasks = task.task?.task?.filter((task: any) => task.status === e.target.value);
+      console.log(filteredTasks)
+      setListTask({ task: filteredTasks});
+    }
+  };
+
+  console.log(listTask)
 
   return (
     <LayoutPages>
@@ -164,24 +183,57 @@ const Home = () => {
               List of Task
             </h1>
             <div className="flex lg:flex-row items-center lg:justify-end lg:w-[50%] lg:gap-[2rem] sm:w-full sm:flex-col sm:gap-[0.25rem] sm:justify-center">
-            <div
-              className="flex items-center justify-between gap-[0.75rem] p-[0.75rem] hover:cursor-pointer hover:font-bold"
-              onClick={handleAddButton}
-            >
-              <div className="w-[25px] h-[25px] flex items-center justify-center">
-                <Image src="/images/add.png" alt="add" width={25} height={25} />
+                <div className="w-[25px] h-[25px] flex items-center justify-center">
+                  <Image
+                    src="/images/filter.png"
+                    alt="add"
+                    width={25}
+                    height={25}
+                  />
+                </div>
+                <div className="flex flex-col gap-[0.25rem]">
+                  <select
+                    className="p-[0.25rem_0.5rem] capitalize shadow-[0_0_0.1rem_rgba(0,0,0,0.25)] text-black rounded-[0.25rem] lg:text-[1rem] h-[2.5rem] outline-none transition-all duration-[0.25s] ease-in-out focus:border-[1px_solid_black] focus:shadow-[0_0_0.5rem_rgba(0,0,0,0.25)] sm:text-[0.75rem]"
+                    id="filter-status"
+                    value={filteredStatus}
+                    onChange={(e) => {
+                      setFilteredStatus(e.target.value);
+                      handleFilterStatus(e);
+                    }}
+                  >
+                    <option value="" hidden disabled selected>
+                      {filteredStatus}
+                    </option>
+                    {statusOptions.map((option) => (
+                      <option className="capitalize" key={option} value={option}>
+                        {option}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              <div
+                className="flex items-center justify-between gap-[0.75rem] p-[0.75rem] hover:cursor-pointer hover:font-bold"
+                onClick={handleAddButton}
+              >
+                <div className="w-[25px] h-[25px] flex items-center justify-center">
+                  <Image
+                    src="/images/add.png"
+                    alt="add"
+                    width={25}
+                    height={25}
+                  />
+                </div>
+                <span>Add Task</span>
               </div>
-              <span>Add Task</span>
+              <input
+                className="lg:w-[40%] lg:h-[2.5rem] shadow-[0_0_0.1rem_rgba(0,0,0,0.5)] rounded-[0.5rem] border-[1px_solid_#000] p-[0_1rem] lg:text-[1rem] font-[500] text-black outline-none transition-all duration-[0.25s] ease-in-out focus:shadow-[0_0_0.5rem_rgba(0,0,0,0.25)] sm:text-[0.75rem] sm:w-full sm:h-[2rem]"
+                type="text"
+                placeholder="Search Task..."
+                onInput={handleSearch}
+              />
             </div>
-            <input
-              className="lg:w-[40%] lg:h-[2.5rem] shadow-[0_0_0.1rem_rgba(0,0,0,0.5)] rounded-[0.5rem] border-[1px_solid_#000] p-[0_1rem] lg:text-[1rem] font-[500] text-black outline-none transition-all duration-[0.25s] ease-in-out focus:shadow-[0_0_0.5rem_rgba(0,0,0,0.25)] sm:text-[0.75rem] sm:w-full sm:h-[2rem]"
-              type="text"
-              placeholder="Search Task..."
-              onInput={handleSearch}
-            />
           </div>
-          </div>
-          
+
           {task.length === 0 ? (
             <p className="lg:text-[1.25rem] font-[500] text-black mb-[1rem] text-center sm:text-[1.5rem]">
               You don't have any tasks yet.
